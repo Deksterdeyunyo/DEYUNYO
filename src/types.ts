@@ -19,6 +19,8 @@ export interface Distribution {
   seed_id: number;
   seed_name?: string;
   recipient: string;
+  address?: string;
+  contact_number?: string;
   quantity: number;
   date: string;
 }

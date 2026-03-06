@@ -34,11 +34,20 @@ db.exec(`
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     seed_id INTEGER,
     recipient TEXT,
+    address TEXT,
+    contact_number TEXT,
     quantity REAL,
     date DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY(seed_id) REFERENCES seeds(id)
   );
+
+  -- Migration for existing tables
+  PRAGMA table_info(distributions);
 `);
+
+// Ensure new columns exist for existing databases
+try { db.exec("ALTER TABLE distributions ADD COLUMN address TEXT;"); } catch(e) {}
+try { db.exec("ALTER TABLE distributions ADD COLUMN contact_number TEXT;"); } catch(e) {}
 
 // Seed initial admin if not exists
 const adminExists = db.prepare('SELECT * FROM users WHERE username = ?').get('admin');
@@ -125,7 +134,7 @@ async function startServer() {
   });
 
   app.post('/api/distributions', authenticate, (req, res) => {
-    const { seed_id, recipient, quantity } = req.body;
+    const { seed_id, recipient, address, contact_number, quantity } = req.body;
     
     // Start transaction
     const transaction = db.transaction(() => {
@@ -135,7 +144,7 @@ async function startServer() {
       }
       
       db.prepare('UPDATE seeds SET quantity = quantity - ? WHERE id = ?').run(quantity, seed_id);
-      db.prepare('INSERT INTO distributions (seed_id, recipient, quantity) VALUES (?, ?, ?)').run(seed_id, recipient, quantity);
+      db.prepare('INSERT INTO distributions (seed_id, recipient, address, contact_number, quantity) VALUES (?, ?, ?, ?, ?)').run(seed_id, recipient, address, contact_number, quantity);
     });
 
     try {

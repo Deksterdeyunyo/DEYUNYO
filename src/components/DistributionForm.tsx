@@ -13,6 +13,8 @@ export default function DistributionForm({ seeds, onComplete }: DistributionForm
   const [formData, setFormData] = useState({
     seed_id: '',
     recipient: '',
+    address: '',
+    contact_number: '',
     quantity: 0
   });
 
@@ -33,7 +35,7 @@ export default function DistributionForm({ seeds, onComplete }: DistributionForm
       });
       if (res.ok) {
         onComplete();
-        setFormData({ seed_id: '', recipient: '', quantity: 0 });
+        setFormData({ seed_id: '', recipient: '', address: '', contact_number: '', quantity: 0 });
       } else {
         const data = await res.json();
         setError(data.error || 'Distribution failed');
@@ -75,6 +77,30 @@ export default function DistributionForm({ seeds, onComplete }: DistributionForm
           onChange={(e) => setFormData({ ...formData, recipient: e.target.value })}
           className="w-full px-4 py-3 bg-stone-50 border border-stone-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none"
           placeholder="e.g. Juan Dela Cruz"
+        />
+      </div>
+
+      <div>
+        <label className="block text-xs font-bold text-stone-400 uppercase tracking-widest mb-2">Address</label>
+        <input
+          type="text"
+          required
+          value={formData.address}
+          onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+          className="w-full px-4 py-3 bg-stone-50 border border-stone-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none"
+          placeholder="e.g. Brgy. San Jose, City"
+        />
+      </div>
+
+      <div>
+        <label className="block text-xs font-bold text-stone-400 uppercase tracking-widest mb-2">Contact Number</label>
+        <input
+          type="text"
+          required
+          value={formData.contact_number}
+          onChange={(e) => setFormData({ ...formData, contact_number: e.target.value })}
+          className="w-full px-4 py-3 bg-stone-50 border border-stone-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none"
+          placeholder="e.g. 09123456789"
         />
       </div>
 
